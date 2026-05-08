@@ -11,6 +11,7 @@ import { Sparkles, Terminal, BarChart3 } from "lucide-react"
 import { FeatureCard } from "@/components/cards/FeatureCard";
 import aiAssistantImg from "../../public/images/aiImage.png";
 import Cta from "@/components/layout/cta/Cta";
+import Footer from "@/components/layout/footer/Footer";
 
 export default function Home() {
 
@@ -178,7 +179,7 @@ export default function Home() {
                 className="min-[860px]:hidden p-2 text-foreground z-[60] relative"
               >
                 {/* Simple animated hamburger using Lucide or basic spans */}
-                <div className="space-y-1.5">
+                <div className="space-y-1.5 mr-2">
                   <span
                     className={`block w-6 h-0.5 bg-current transition-all ${isOpen ? "rotate-45 translate-y-2" : ""}`}
                   ></span>
@@ -263,6 +264,7 @@ export default function Home() {
         </div>
       </section>
       <Cta></Cta>
+      <Footer></Footer>
     </main>
   );
 }
