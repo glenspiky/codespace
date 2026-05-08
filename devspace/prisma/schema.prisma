@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/client" // Required in Prisma 7
+}
+
+datasource db {
+  provider = "mongodb"
+}
+
+
+model User {
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
+  name          String?   
+  email         String    @unique
+  image         String?   // Profile picture URL
+  bio           String?   // "Full Stack Developer"
+  location      String?   // e.g., "Nairobi, Kenya"
+  
+  // Relations
+  snippets      Snippet[]
+  projects      Project[]
+  accounts      Account[] // Required for Better Auth social login
+  //auth 
+  sessions      Session[]
+}
+model Snippet {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  title       String   // e.g., "Fetch Data from API"
+  code        String   // The actual code block
+  language    String   // e.g., "JavaScript" or "Node.js"
+  tags        String[] // e.g., ["Auth", "Utils"]
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+model Project {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  name        String   // e.g., "Landing Page"
+  tasks       Task[]
+  userId      String   @db.ObjectId
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model Task {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  content     String   // e.g., "Setup MongoDB"
+  status      String   // "TODO", "IN_PROGRESS", "REVIEW", "DONE"
+  priority    String?  // e.g., "High"
+  projectId   String   @db.ObjectId
+  project     Project  @relation(fields: [projectId], references: [id])
+}
+model ChatMessage {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  role      String   // "user" or "assistant"
+  content   String   // The message text
+  userId    String   @db.ObjectId
+  createdAt DateTime @default(now())
+}
+model Account {
+  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId                String    @db.ObjectId
+  type                  String
+  provider              String
+  providerAccountId     String
+  refresh_token         String?   @db.String
+  access_token          String?   @db.String
+  expires_at            Int?
+  token_type            String?
+  scope                 String?
+  id_token              String?   @db.String
+  session_state         String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+model Session {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionToken String   @unique
+  userId       String   @db.ObjectId
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
