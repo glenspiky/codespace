@@ -1,26 +1,93 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* LIGHT THEME (Clean Slate) */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.05 285.823); /* Deep Dark Purple text */
+
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.141 0.05 285.823);
+
+  --primary: oklch(0.55 0.25 275); /* Vibrant Purple */
+  --primary-foreground: oklch(0.985 0 0);
+
+  --secondary: oklch(0.92 0.04 275);
+  --secondary-foreground: oklch(0.25 0.1 275);
+
+  --muted: oklch(0.95 0.02 275);
+  --muted-foreground: oklch(0.4 0.05 275);
+
+  --accent: oklch(0.92 0.04 275);
+  --accent-foreground: oklch(0.25 0.1 275);
+
+  --border: oklch(0.9 0.02 275);
+  --input: oklch(0.9 0.02 275);
+  --ring: oklch(0.55 0.25 275);
+}
+
+.dark {
+  /* BACKGROUND: Deep space purple-black */
+  /* 0.12 (Darkness) | 0.03 (Saturation) | 285 (Royal Purple Hue) */
+  --background: oklch(0.12 0.03 285); 
+  --foreground: oklch(0.98 0.01 285);
+
+  /* PRIMARY (Get Started Button): This is the punchy purple from your image */
+  /* 0.58 (Brightness) | 0.23 (High Vibrancy) | 285 (Hue) */
+  --primary: oklch(0.58 0.23 285);
+  --primary-foreground: oklch(1 0 0);
+
+  /* SECONDARY (View Demo Button & Text): Muted but clearly purple */
+  --secondary: oklch(0.28 0.08 285); 
+  --secondary-foreground: oklch(0.98 0.01 285);
+
+  --muted: oklch(0.22 0.05 285);
+  --muted-foreground: oklch(0.7 0.04 285);
+
+  --accent: oklch(0.28 0.08 285);
+  --accent-foreground: oklch(0.98 0.01 285);
+
+  /* BORDERS: Subtle purple-tinted white */
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 10%);
+  --ring: oklch(0.58 0.23 285);
+  
+  /* Feature Card Surface */
+  --surface: #130b20; 
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  
+  --color-surface: var(--surface);
+  --color-border: var(--border);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Glass effect refinement for that "Neo-Dark" look */
+.glass {
+  background: rgba(255, 255, 255, 0.02);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+}
+
+@layer base {
+  * {
+    @apply border-border;
   }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
 }
