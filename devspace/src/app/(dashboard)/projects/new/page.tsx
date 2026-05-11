@@ -115,10 +115,9 @@ export default function NewSnippetPage() {
 
       <div className="rounded-2xl border border-white/10 bg-[#0a0a0f] overflow-hidden shadow-2xl h-[calc(100vh-280px)]">
         <CodeEditor
-          onChange={(val) => setCode(val || "")}
-          language={language}
-          theme="vs-dark"
-        />
+  onChange={(val) => setCode(val || "")}
+  language={language}
+/>
       </div>
     </motion.div>
   );
