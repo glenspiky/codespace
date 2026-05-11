@@ -7,16 +7,14 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { Sparkles, Terminal, BarChart3 } from "lucide-react"
+import { Sparkles, Terminal, BarChart3 } from "lucide-react";
 import { FeatureCard } from "@/components/cards/FeatureCard";
 import aiAssistantImg from "../../public/images/aiImage.png";
 import Cta from "@/components/layout/cta/Cta";
 import Footer from "@/components/layout/footer/Footer";
 
 export default function Home() {
-
-
-  const [isOpen,setIsOpen]=useState<boolean>(false)
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   return (
     <main className="dark min-h-screen bg-background text-foreground selection:bg-primary/30">
       {/* HERO SECTION */}
@@ -107,7 +105,7 @@ export default function Home() {
               Snippets
             </Link>
             <Link
-              href="#"
+              href="/login"
               onClick={() => setIsOpen(false)}
               className="text-2xl font-medium"
             >
@@ -115,12 +113,16 @@ export default function Home() {
             </Link>
 
             <div className="flex flex-col w-full px-10 gap-4 pt-10">
-              <Button
-                className="w-full h-14 text-lg bg-surface border border-border"
-                variant="secondary"
-              >
-                Login
-              </Button>
+              <Link
+                href="/login" >
+                <Button
+                  className="w-full h-14 text-lg bg-surface border border-border"
+                  variant="secondary"
+                >
+                  Login
+                </Button>
+              </Link>
+
               <Button className="w-full h-14 text-lg">Sign Up</Button>
             </div>
           </div>
@@ -264,9 +266,7 @@ export default function Home() {
         </div>
       </section>
       <Cta></Cta>
-      <Footer></Footer>
+     
     </main>
   );
 }
-
-

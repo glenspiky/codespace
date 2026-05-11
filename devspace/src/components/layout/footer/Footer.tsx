@@ -4,7 +4,7 @@ import React from 'react'
 export default function Footer() {
   return (
     <div>
-      <footer className="border-t border-border bg-background pt-24 pb-12">
+      <footer className="border-t border-border  pt-24 pb-12">
         <div className="container px-6 lg:px-20 mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-12 mb-16">
             {/* Brand Column */}

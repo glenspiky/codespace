@@ -1,86 +1,94 @@
-
 generator client {
   provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
   provider = "mongodb"
-  url = env("DATABASE_URL")
-
+  url      = env("DATABASE_URL")
 }
-
 
 model User {
   id            String    @id @default(auto()) @map("_id") @db.ObjectId
-  name          String?   
+  name          String?
   email         String    @unique
-  image         String?   // Profile picture URL
-  bio           String?   // "Full Stack Developer"
-  location      String?   // e.g., "Nairobi, Kenya"
-  
-  // Relations
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+  bio           String?
+  location      String?
   snippets      Snippet[]
   projects      Project[]
-  accounts      Account[] // Required for Better Auth social login
-  //auth 
+  accounts      Account[]
   sessions      Session[]
+  @@map("user")
 }
+
+model Account {
+  id           String    @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String    @db.ObjectId
+  accountId    String
+  providerId   String
+  accessToken  String?
+  refreshToken String?
+  expiresAt    DateTime?
+  password     String?
+  scope        String?
+  createdAt    DateTime
+  updatedAt    DateTime
+  user         User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("account")
+}
+
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime
+  updatedAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@map("session")
+}
+
+model Verification {
+  id         String    @id @map("_id")
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+  @@map("verification")
+}
+
 model Snippet {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  title       String   // e.g., "Fetch Data from API"
-  code        String   // The actual code block
-  language    String   // e.g., "JavaScript" or "Node.js"
-  tags        String[] // e.g., ["Auth", "Utils"]
-  userId      String   @db.ObjectId
-  user        User     @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  title     String
+  code      String
+  language  String
+  tags      String[]
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
+
 model Project {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  name        String   // e.g., "Landing Page"
-  tasks       Task[]
-  userId      String   @db.ObjectId
-  user        User     @relation(fields: [userId], references: [id])
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
+  name   String
+  tasks  Task[]
+  userId String @db.ObjectId
+  user   User   @relation(fields: [userId], references: [id])
 }
 
 model Task {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  content     String   // e.g., "Setup MongoDB"
-  status      String   // "TODO", "IN_PROGRESS", "REVIEW", "DONE"
-  priority    String?  // e.g., "High"
-  projectId   String   @db.ObjectId
-  project     Project  @relation(fields: [projectId], references: [id])
-}
-model ChatMessage {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  role      String   // "user" or "assistant"
-  content   String   // The message text
-  userId    String   @db.ObjectId
-  createdAt DateTime @default(now())
-}
-model Account {
-  id                    String    @id @default(auto()) @map("_id") @db.ObjectId
-  userId                String    @db.ObjectId
-  type                  String
-  provider              String
-  providerAccountId     String
-  refresh_token         String?   @db.String
-  access_token          String?   @db.String
-  expires_at            Int?
-  token_type            String?
-  scope                 String?
-  id_token              String?   @db.String
-  session_state         String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@unique([provider, providerAccountId])
-}
-model Session {
-  id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  sessionToken String   @unique
-  userId       String   @db.ObjectId
-  expires      DateTime
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  status    String
+  priority  String?
+  projectId String  @db.ObjectId
+  project   Project @relation(fields: [projectId], references: [id])
 }
