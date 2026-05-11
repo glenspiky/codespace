@@ -1,70 +1,112 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { createSnippet } from "@/app/actions/snippets";
+import { getProjects } from "@/app/actions/projects";
+import ProjectSelector from "@/components/shared/ProjectSelector";
 import CodeEditor from "@/components/shared/CodeEditor";
 import LanguageSelector from "@/components/shared/LanguageSelector";
 import { Button } from "@/components/ui/button";
-import { motion } from "framer-motion";
+import { Loader2 } from "lucide-react"; // For the loading spinner
 
 export default function NewSnippetPage() {
+  const searchParams = useSearchParams();
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("typescript");
-  const [isPending, setIsPending] = useState(false);
+  const [projectId, setProjectId] = useState(
+    searchParams.get("projectId") || "none",
+  );
+  const [projects, setProjects] = useState<{ id: string; name: string }[]>([]);
+  const [isPending, setIsPending] = useState(false); // Added loading state
 
+  useEffect(() => {
+    getProjects().then(setProjects);
+  }, []);
+
+  // --- THE FIX: Create the handleSave function ---
   async function handleSave() {
-    if (!title || !code) return alert("Please fill in all fields");
+    if (!title || !code) return alert("Please provide a title and code.");
 
     setIsPending(true);
     try {
-      await createSnippet({ title, code, language });
+      await createSnippet({
+        title,
+        code,
+        language,
+        // Convert "none" back to undefined so Prisma ignores it
+        projectId: projectId === "none" ? undefined : projectId,
+      });
+      // Redirect is handled inside the server action
     } catch (error) {
-      console.error(error);
+      console.error("Failed to deploy:", error);
       setIsPending(false);
     }
   }
 
+  const currentProjectName =
+    projects.find((p) => p.id === projectId)?.name || "Standalone";
+
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="max-w-5xl mx-auto space-y-6"
-    >
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-white tracking-tight">
-          New Snippet
+    <div className="max-w-6xl mx-auto space-y-4">
+      {/* Top Header */}
+      <div className="flex items-center justify-between px-1">
+        <h1 className="text-xl font-bold text-white tracking-tight">
+          Deploy Snippet
         </h1>
         <Button
-          onClick={handleSave}
-          disabled={isPending}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white px-8 rounded-xl shadow-lg shadow-indigo-600/20"
+          onClick={handleSave} // Connected the handler
+          disabled={isPending} // Disable while saving
+          className="bg-indigo-600 hover:bg-indigo-500 h-9 px-6 rounded-lg text-xs font-bold transition-all disabled:opacity-50"
         >
-          {isPending ? "Creating..." : "Deploy Snippet"}
+          {isPending ? (
+            <Loader2 className="h-4 w-4 animate-spin" />
+          ) : (
+            "Save Cloud"
+          )}
         </Button>
       </div>
 
-      <div className="grid grid-cols-1 gap-4">
-        <input
-          type="text"
-          placeholder="Snippet Title..."
-          className="bg-white/5 border border-white/10 rounded-2xl px-6 py-4 text-xl text-white outline-none focus:border-indigo-500/50 transition-all"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-
-        <div className="flex items-center justify-between p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
-          <span className="text-zinc-500 text-sm font-mono">
-            Environment: Production
-          </span>
-          <LanguageSelector value={language} onChange={setLanguage} />
+      {/* Toolbar */}
+      <div className="flex flex-row items-end gap-3 w-full">
+        <div className="flex-[3] space-y-1">
+          <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-600 ml-1">
+            Title
+          </label>
+          <input
+            type="text"
+            placeholder="Snippet name..."
+            className="w-full bg-[#0a0a0f] border border-white/5 rounded-xl px-4 h-10 text-[13px] text-white outline-none focus:border-indigo-500/50"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
         </div>
 
+        <ProjectSelector
+          pname={currentProjectName}
+          projects={projects}
+          value={projectId}
+          onChange={setProjectId}
+        />
+
+        <div className="flex-1 space-y-1">
+          <label className="text-[10px] uppercase tracking-widest font-bold text-zinc-600 ml-1">
+            Runtime
+          </label>
+          <div className="   flex items-center">
+            <LanguageSelector value={language} onChange={setLanguage} />
+          </div>
+        </div>
+      </div>
+
+      {/* Editor Container */}
+      <div className="rounded-2xl border border-white/5 bg-[#0a0a0f] overflow-hidden h-[calc(100vh-280px)] shadow-2xl">
         <CodeEditor
           onChange={(val) => setCode(val || "")}
           language={language}
         />
       </div>
-    </motion.div>
+    </div>
   );
 }
