@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createSnippet } from "@/app/actions/snippets";
 import { getProjects } from "@/app/actions/projects";
@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Loader2, Terminal, ChevronDown } from "lucide-react";
 
-export default function NewSnippetPage() {
+function NewSnippetPageContent() {
   const searchParams = useSearchParams();
   const initialProjectId = searchParams.get("projectId") || "none";
 
@@ -18,13 +18,21 @@ export default function NewSnippetPage() {
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("typescript");
   const [projectId, setProjectId] = useState(initialProjectId);
-  const [projects, setProjects] = useState<{ id: string; name: string }[]>([]);
+
+  const [projects, setProjects] = useState<
+    { id: string; name: string }[]
+  >([]);
+
   const [isPending, setIsPending] = useState(false);
 
   useEffect(() => {
     async function fetchProjects() {
-      const data = await getProjects();
-      setProjects(data);
+      try {
+        const data = await getProjects();
+        setProjects(data);
+      } catch (error) {
+        console.error(error);
+      }
     }
 
     fetchProjects();
@@ -40,6 +48,7 @@ export default function NewSnippetPage() {
         title,
         code,
         language,
+        projectId: projectId === "none" ? undefined : projectId,
       });
     } catch (error) {
       console.error(error);
@@ -99,7 +108,11 @@ export default function NewSnippetPage() {
             <option value="none">Standalone</option>
 
             {projects.map((p) => (
-              <option key={p.id} value={p.id} className="bg-[#0a0a0f]">
+              <option
+                key={p.id}
+                value={p.id}
+                className="bg-[#0a0a0f]"
+              >
                 {p.name}
               </option>
             ))}
@@ -109,16 +122,27 @@ export default function NewSnippetPage() {
         </div>
 
         <div className="flex-1 min-w-[140px] h-10 bg-[#0a0a0f] border border-white/10 rounded-xl flex items-center px-2">
-          <LanguageSelector value={language} onChange={setLanguage} />
+          <LanguageSelector
+            value={language}
+            onChange={setLanguage}
+          />
         </div>
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-[#0a0a0f] overflow-hidden shadow-2xl h-[calc(100vh-280px)]">
         <CodeEditor
-  onChange={(val) => setCode(val || "")}
-  language={language}
-/>
+          onChange={(val) => setCode(val || "")}
+          language={language}
+        />
       </div>
     </motion.div>
+  );
+}
+
+export default function NewSnippetPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <NewSnippetPageContent />
+    </Suspense>
   );
 }
