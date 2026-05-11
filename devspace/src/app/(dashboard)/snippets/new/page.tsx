@@ -32,12 +32,10 @@ export default function NewSnippetPage() {
     setIsPending(true);
     try {
       await createSnippet({
-        title,
-        code,
-        language,
-        // Convert "none" back to undefined so Prisma ignores it
-        projectId: projectId === "none" ? undefined : projectId,
-      });
+  title,
+  code,
+  language,
+});
       // Redirect is handled inside the server action
     } catch (error) {
       console.error("Failed to deploy:", error);
