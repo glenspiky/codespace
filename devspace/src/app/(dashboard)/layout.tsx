@@ -1,5 +1,6 @@
-import DashboardNavbar from '@/components/layout/dashboardNavbar/DashboardNavbar';
-import Sidebar from '../../components/layout/sidebar/sidebar';
+import DashboardNavbar from "@/components/layout/dashboardNavbar/DashboardNavbar";
+import Sidebar from "../../components/layout/sidebar/sidebar";
+import { ThemeSync } from "@/components/providers/ThemeSync"; // Import the bridge
 
 export default function DashboardLayout({
   children,
@@ -7,12 +8,15 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex min-h-screen bg-[#05050a] text-white">
-      {/* 1. Sidebar - Fixed on desktop, drawer on mobile */}
+    <div className="flex min-h-screen bg-background text-foreground transition-colors duration-300">
+      {/* Ensures the Zustand state syncs with the HTML class */}
+      <ThemeSync />
+
+      {/* 1. Sidebar */}
       <Sidebar />
 
       <div className="flex-1 flex flex-col">
-        {/* 2. Internal Navbar - Search & User Profile */}
+        {/* 2. Internal Navbar */}
         <DashboardNavbar />
 
         {/* 3. Main Content Area */}
