@@ -17,10 +17,11 @@ export default function CodeEditor({
   return (
     <div className="rounded-xl overflow-hidden border border-white/10 bg-[#1e1e1e] shadow-2xl">
       <Editor
+        key={language} // ← forces remount when language changes
         height="400px"
-        defaultLanguage={language}
+        language={language} // ← "language" not "defaultLanguage"
         defaultValue={initialValue}
-        theme="vs-dark" // You can also use 'light'
+        theme="vs-dark"
         onChange={onChange}
         options={{
           minimap: { enabled: false },
@@ -28,7 +29,7 @@ export default function CodeEditor({
           cursorSmoothCaretAnimation: "on",
           smoothScrolling: true,
           padding: { top: 16, bottom: 16 },
-          fontFamily: "'JetBrains Mono', monospace", // Perfect for Arch users
+          fontFamily: "'JetBrains Mono', monospace",
         }}
       />
     </div>

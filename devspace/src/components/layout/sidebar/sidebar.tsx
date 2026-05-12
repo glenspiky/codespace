@@ -77,7 +77,7 @@ export default function Sidebar() {
       {/* Collapse Toggle Button */}
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="absolute -right-3 top-24 hidden h-6 w-6 items-center justify-center rounded-full border border-white/10 bg-zinc-900 text-zinc-400 hover:text-white md:flex"
+        className="absolute flex -right-4 top-18 z-100  h-8 w-8 items-center justify-center rounded-full border border-white/10 bg-zinc-900 text-zinc-400 hover:text-white "
       >
         {isCollapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
       </button>

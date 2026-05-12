@@ -4,12 +4,19 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createSnippet } from "@/app/actions/snippets";
 import { getProjects } from "@/app/actions/projects";
-import CodeEditor from "@/components/shared/CodeEditor";
 import LanguageSelector from "@/components/shared/LanguageSelector";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Loader2, Terminal, ChevronDown } from "lucide-react";
 
+const CodeEditor = dynamic(() => import("@/components/shared/CodeEditor"), {
+  ssr: false,
+  loading: () => (
+    <div className="h-full flex items-center justify-center bg-[#0a0a0f]">
+      <Loader2 className="h-5 w-5 animate-spin text-zinc-600" />
+    </div>
+  ),
+});
 function NewSnippetPageContent() {
   const searchParams = useSearchParams();
   const initialProjectId = searchParams.get("projectId") || "none";
