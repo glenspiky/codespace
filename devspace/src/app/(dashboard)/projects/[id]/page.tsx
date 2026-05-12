@@ -79,7 +79,7 @@ export default async function ProjectDetailPage({ params }: ProjectPageProps) {
 
           <div className="grid gap-4">
             {project.snippets.length > 0 ? (
-              project.snippets.map((snippet) => (
+              project.snippets.map((snippet:any) => (
                 <ActivityItem
                   key={snippet.id}
                   title={snippet.title}
