@@ -1,5 +1,5 @@
 "use client";
-
+import dynamic from "next/dynamic";
 import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { createSnippet } from "@/app/actions/snippets";
