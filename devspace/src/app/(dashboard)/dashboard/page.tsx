@@ -6,6 +6,15 @@ import { formatDistanceToNow } from "date-fns";
 import { Code2, Plus, Terminal, Zap, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+interface Snippet {
+  id: string;
+  title: string;
+  language: string;
+  createdAt: Date;
+  // add other fields you are using
+}
+
+// Then in your map:
 
 import { StatCard } from "@/components/layout/dashboard/StatCard";
 import { ActivityItem } from "@/components/layout/dashboard/ActivityItem";
@@ -98,7 +107,7 @@ export default async function DashboardPage() {
 
           <div className="space-y-4">
             {recentSnippets.length > 0 ? (
-              recentSnippets.map((snippet) => (
+              recentSnippets.map((snippet: Snippet) => (
                 <ActivityItem
                   key={snippet.id}
                   title={snippet.title}
